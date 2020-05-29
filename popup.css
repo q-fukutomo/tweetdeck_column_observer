@@ -1,0 +1,26 @@
+#container {
+    width: 200px;
+}
+
+#authorIcon {
+    display: block;
+    width: 50px;
+    height:50px;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+#tweetTextBox {
+    border: 1px solid #333333;
+    border-radius: 5px;
+    padding: 2px;
+    /* width: 100%; */
+}
+
+#start {
+    display: block;
+    height: 30px;
+    width: 80px;
+    outline: none;
+    margin: 2px auto;
+}
