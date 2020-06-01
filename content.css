@@ -1,0 +1,52 @@
+#extentionView {
+    width:300px;
+    height:250px;
+    position:absolute;
+    top:0;
+    right:0;
+    z-index:10;
+}
+#extentionViewInner {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #333333;
+    background-color: #FFFFFF;
+    padding: 10px;
+    /* opacity:70%; */
+}
+
+#authorIcon {
+    /* display: block; */
+    display: none;
+    width: 50px;
+    height:50px;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+#author {
+    display: none;
+}
+
+#tweetTextBox {
+    border: 1px solid #333333;
+    border-radius: 5px;
+    padding: 2px;
+    margin: 5px 0;
+    height: 160px;
+}
+
+#closeButtonWrapper {
+    position: absolute;
+    bottom: 15px;
+    left: 0px;
+    width: 100%;
+}
+#closeButton {
+    display: block;
+    height: 30px;
+    width: 80px;
+    outline: none;
+    margin: 2px auto;
+}

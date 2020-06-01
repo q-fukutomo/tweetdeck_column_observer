@@ -1,36 +1,168 @@
+// #########################
+// config start
+const hashtag = {
+    // "event": "タマクラ1",
+    "event": "pan_dev_test",
+    "nowplaying_suffix": "_なうぷれ"
+};
+// config end
+// #########################
+
+// document.addEventListener('click', 'button#closeButton',)
+
 chrome.runtime.onMessage.addListener(
     function(request,sender,sendResponse){
-        if(request.msg === 'start'){
-            const searchBox = document.querySelector('input[value=\\#pan_dev_test]');
-            const column = searchBox.closest('div.column-panel');
-            
-            const observeTarget = column.querySelector('div.js-column-content div.js-column-scroller div.js-chirp-container');
-            const observer = new MutationObserver(records => {
-                records.forEach(record => {
-                    Array.from(record.addedNodes).forEach(newArticle => getTweetData(newArticle))
-                });
-            });
+        const extentionView = createExtentionView();
+        extentionView.querySelector('#closeButton').addEventListener('click', ()=>disableExtentionView());
+        const observer = createObserver();
+        let observeTarget;
+
+        if(request.msg === 'init'){
+            observeTarget = initObserveTarget();
+            if(observeTarget){
+                observer.observe(observeTarget, {childList: true});
+                console.log('observing start.');
+                sendResponse({status: 0, msg: 'OK'}); 
+            }else{
+                sendResponse({status: 1, msg: 'target-column not found'}); 
+            }
+        }else if(request.msg === 'start'){
             observer.observe(observeTarget, {childList: true});
-            sendResponse({msg: "observing start."});
-        }else{
-            sendResponse({msg: "error."});
+            console.log('observing start.');
+            sendResponse({status: 0, msg: 'OK'});
+            return true;
+        }else if(request.msg === 'stop'){
+            observer.disconnect();
+            sendResponse({state: 0,msg: 'OK'});
         }
+
         return true;
     }
 );
 
+function getExtentionView(){
+    return document.querySelector('#extentionView');
+}
+function createExtentionView(){
+    const _extentionView = getExtentionView();
+    if(_extentionView !== null){
+        console.log('extentionView already exists');
+        return _extentionView;
+    }
+
+    const extentionView = document.createElement('div');
+    extentionView.id = 'extentionView';
+
+    const extentionViewInner = document.createElement('div');
+    extentionViewInner.id = 'extentionViewInner';
+    extentionView.appendChild(extentionViewInner);
+
+    const authorIcon = document.createElement('img');
+    authorIcon.id = 'authorIcon';
+    authorIcon.setAttribute('src', chrome.extension.getURL('img/egg.png'));
+    extentionViewInner.appendChild(authorIcon);
+
+    const author = document.createElement('p');
+    author.id = 'author';
+    author.innerText = '投稿者';
+    extentionViewInner.appendChild(author);
+
+    const tweetTextBox = document.createElement('p');
+    tweetTextBox.id = 'tweetTextBox';
+    tweetTextBox.innerText = 'ツイート本文';
+    extentionViewInner.appendChild(tweetTextBox);
+
+    // extentionViewInner.appendChild(document.createElement('hr'));
+    
+    const closeButtonWrapper = document.createElement('div');
+    closeButtonWrapper.id = 'closeButtonWrapper';
+    extentionViewInner.appendChild(closeButtonWrapper);
+
+    const closeButton = document.createElement('button');
+    closeButton.id = 'closeButton';
+    closeButton.innerText = '閉じる';
+    closeButtonWrapper.appendChild(closeButton);
+
+    document.body.appendChild(extentionView);
+
+    console.log('created extentionView');
+    return extentionView;
+}
+function enableExtentionView(){
+    const extentionView = document.querySelector('#extentionView');
+    if(extentionView){
+        extentionView.setAttribute('style', 'display: block;');
+        return 0;
+    }
+    return 1;
+}
+function disableExtentionView(){
+    const extentionView = document.querySelector('#extentionView');
+    if(extentionView){
+        extentionView.setAttribute('style', 'display: none;');
+        return 0;
+    }
+    return 1;
+}
+
+function createObserver(){
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutate => {
+            Array.from(mutate.addedNodes).forEach(
+                newArticle => updateExtentionView(newArticle)
+            )
+        });
+    });
+    return observer;
+}
+function initObserveTarget(){
+    const _searchBox = document.querySelector(`input[value=\\#${hashtag.event}${hashtag.nowplaying_suffix}]`);
+    if(_searchBox === null) return null;
+
+    const searchBox = _searchBox;
+    const column = searchBox.closest('div.column-panel');
+
+    const observeTarget = column.querySelector('div.js-column-content div.js-column-scroller div.js-chirp-container');
+    return observeTarget;
+}
+
+function updateExtentionView(article){
+    const extentionView = getExtentionView();
+    if(extentionView === null) return 1;
+
+    const tweetData = getTweetData(article);
+    const authorIcon = document.getElementById('authorIcon');
+    const author = document.getElementById('author');
+    const tweetTextBox = document.getElementById('tweetTextBox');
+
+    authorIcon.setAttribute('src', tweetData.authorIconSrc);
+    author.innerText = tweetData.author;
+    tweetTextBox.innerText = removeHashtag(tweetData.tweetText);
+
+    return 0;
+}
 function getTweetData(article){
     const tweetData = {
         authorIconSrc: article.querySelector('img.tweet-avatar').getAttribute('src'),
         author: article.querySelector('span.username').innerText,
         tweetText: article.querySelector('p.tweet-text').innerText
     };
-
-    popupUpdate(tweetData);
+    return tweetData;
 }
 
-function popupUpdate(tweetData){
-    chrome.runtime.sendMessage(
-        {tweetData: tweetData}, res => console.log(res.status)
-    );
+function removeHashtag(tweetText){
+    let viewText = '';
+    // const preg = /#pan_dev_test(_なうぷれ)?(\s|$)/g;
+    const preg = new RegExp(`#${hashtag.event}(${hashtag.nowplaying_suffix})?(\s|$)`, 'g');
+    // console.log(preg);
+
+    tweetText.split('\n').forEach(line => {
+        if(!line.match(preg)){
+            viewText += line+'\n';
+        }else{
+            line = line.replace(preg, '');
+            if(line.match(/[^\s]/)) viewText += line+'\n';
+        }
+    });
+    return viewText;
 }

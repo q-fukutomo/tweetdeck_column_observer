@@ -1,6 +1,6 @@
 {
     "name": "tweetdeck column observer",
-    "version": "0.1",
+    "version": "0.2",
     "description": "deckで監視してるタグのツイートを取得するやつ",
     "permissions": ["activeTab", "declarativeContent", "tabs"],
     "background": {
@@ -10,8 +10,12 @@
     "content_scripts": [
         {
             "matches": ["https://tweetdeck.twitter.com/"],
-            "js": ["content.js"]
+            "js": ["content.js"],
+            "css": ["content.css"]
         }
+    ],
+    "web_accessible_resources": [
+        "img/*"
     ],
     "page_action": {
         "default_popup": "popup.html",
