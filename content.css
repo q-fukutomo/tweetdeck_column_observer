@@ -1,9 +1,9 @@
 #extentionView {
-    width:300px;
-    height:250px;
+    width:600px;
+    height:170px;
     position:absolute;
-    top:0;
-    right:0;
+    bottom:2px;
+    right:2px;
     z-index:10;
 }
 #extentionViewInner {
@@ -30,11 +30,15 @@
 }
 
 #tweetTextBox {
-    border: 1px solid #333333;
-    border-radius: 5px;
-    padding: 2px;
+    /* border: 1px solid #333333; */
+    /* border-radius: 8px; */
+    padding: 8px;
     margin: 5px 0;
-    height: 160px;
+    height: 85px;
+    font-family: 'MS 明朝', 'MS Serif', 'serif';
+    font-size: 17px;
+    color: #FFFFFF;
+    background-color: #00FF00;
 }
 
 #closeButtonWrapper {
