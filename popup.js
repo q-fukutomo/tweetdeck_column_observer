@@ -1,41 +1,39 @@
 const triggerButton = document.getElementById('trigger');
-let state = 0;
+
+// popup表示時
+chrome.storage.local.get('executeOperation',(result) => {
+    if(result.executeOperation === 'stop'){
+        triggerButton.innerText = '監視停止';
+        triggerButton.classList.add('stop');
+    }
+});
 
 triggerButton.onclick = function(element) {
-    let operation;
-    switch (state) {
-        case 0:
-            operation = 'init';
-            break;
-        case 1:
-            operation = 'start';
-            break;
-        case 2:
-            operation = 'stop';
-            break;
-        default:
-            break;
-    }
+    let executeOperation;
+    chrome.storage.local.get('executeOperation',(result) => {
+        executeOperation = result.executeOperation;
+    });
+    console.log('executeOperation',executeOperation)
 
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {msg: operation},res => {
-            switch (state) {
-                case 0:
+        chrome.tabs.sendMessage(tabs[0].id, {'msg': executeOperation},res => {
+            switch (executeOperation) {
+                case 'init':
                     if(res.status === 0){
                         triggerButton.innerText = '監視停止';
                         triggerButton.classList.add('stop');
-                        state = 2;
+                        chrome.storage.local.set({'executeOperation':'stop'},function(){});
                     }
                     break;
-                case 1:
+                case 'start':
                     triggerButton.innerText = '監視停止';
                     triggerButton.classList.add('stop');
-                    state = 2;
+                    chrome.storage.local.set({'executeOperation':'stop'},function(){});
                     break;
-                case 2:
+                case 'stop':
                     triggerButton.innerText = '監視開始';
                     triggerButton.classList.remove('stop');
-                    state = 1;
+                    chrome.storage.local.set({'executeOperation':'start'},function(){});
                     break;
                 default:
                     break;
@@ -45,13 +43,15 @@ triggerButton.onclick = function(element) {
 };
 
 // content側で停止押したときの処理
-// chrome.runtime.onMessage.addListener(
-//     function(request,sender,sendResponse){
-//         const tweetData = request.tweetData;
-//         authorIcon.setAttribute('src', tweetData.authorIconSrc);
-//         author.innerText = tweetData.author;
-//         tweetTextBox.innerText = tweetData.tweetText;
-//         sendResponse({status: "OK"});
-//         return true;
-//     }
-// );
+chrome.runtime.onMessage.addListener(
+    function(request,sender,sendResponse){
+        console.log(request);
+
+        triggerButton.innerText = '監視開始';
+        triggerButton.classList.remove('stop');
+        chrome.storage.local.set({'executeOperation':'start'},function(){});
+
+        sendResponse({status: "OK"});
+        return true;
+    }
+);

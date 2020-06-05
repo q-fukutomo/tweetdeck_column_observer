@@ -8,30 +8,34 @@ const hashtag = {
 // config end
 // #########################
 
-// document.addEventListener('click', 'button#closeButton',)
+// ページを開いた際の初期化処理
+chrome.storage.local.set({'executeOperation':'init'},function(){});
+const observer = createObserver();
+let observeTarget;
 
 chrome.runtime.onMessage.addListener(
     function(request,sender,sendResponse){
         const extentionView = createExtentionView();
-        extentionView.querySelector('#closeButton').addEventListener('click', ()=>disableExtentionView());
-        const observer = createObserver();
-        let observeTarget;
+        extentionView.querySelector('#closeButton').addEventListener('click', ()=>{
+            disableExtentionView();
+            observer.disconnect();
+            chrome.runtime.sendMessage({'msg': 'close'}, (res)=>{console.log(res)});
+        });
 
         if(request.msg === 'init'){
             observeTarget = initObserveTarget();
             if(observeTarget){
                 observer.observe(observeTarget, {childList: true});
-                console.log('observing start.');
                 sendResponse({status: 0, msg: 'OK'}); 
             }else{
                 sendResponse({status: 1, msg: 'target-column not found'}); 
             }
         }else if(request.msg === 'start'){
+            enableExtentionView();
             observer.observe(observeTarget, {childList: true});
-            console.log('observing start.');
             sendResponse({status: 0, msg: 'OK'});
-            return true;
         }else if(request.msg === 'stop'){
+            disableExtentionView();
             observer.disconnect();
             sendResponse({state: 0,msg: 'OK'});
         }
@@ -154,7 +158,6 @@ function removeHashtag(tweetText){
     let viewText = '';
     // const preg = /#pan_dev_test(_なうぷれ)?(\s|$)/g;
     const preg = new RegExp(`#${hashtag.event}(${hashtag.nowplaying_suffix})?(\s|$)`, 'g');
-    // console.log(preg);
 
     tweetText.split('\n').forEach(line => {
         if(!line.match(preg)){
