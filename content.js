@@ -1,9 +1,8 @@
 // #########################
 // config start
 const hashtag = {
-    // "event": "タマクラ1",
     "event": "pan_dev_test",
-    "nowplaying_suffix": "_なうぷれ"
+    "nowplaying": "pan_dev_test_なうぷれ"
 };
 // config end
 // #########################
@@ -120,7 +119,7 @@ function createObserver(){
     return observer;
 }
 function initObserveTarget(){
-    const _searchBox = document.querySelector(`input[value=\\#${hashtag.event}${hashtag.nowplaying_suffix}]`);
+    const _searchBox = document.querySelector(`input[value=\\#${hashtag.nowplaying}]`);
     if(_searchBox === null) return null;
 
     const searchBox = _searchBox;
@@ -154,10 +153,10 @@ function getTweetData(article){
     return tweetData;
 }
 
+// TODO: 正規表現、変数展開時のエスケープ処理とか丁寧に
 function removeHashtag(tweetText){
     let viewText = '';
-    // const preg = /#pan_dev_test(_なうぷれ)?(\s|$)/g;
-    const preg = new RegExp(`#${hashtag.event}(${hashtag.nowplaying_suffix})?(\s|$)`, 'g');
+    const preg = new RegExp(`#(${hashtag.event}|${hashtag.nowplaying})(\s|$)`, 'g');
 
     tweetText.split('\n').forEach(line => {
         if(!line.match(preg)){
