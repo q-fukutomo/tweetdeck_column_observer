@@ -156,7 +156,7 @@ function getTweetData(article){
 // TODO: 正規表現、変数展開時のエスケープ処理とか丁寧に
 function removeHashtag(tweetText){
     let viewText = '';
-    const preg = new RegExp(`#(${hashtag.event}|${hashtag.nowplaying})(\s|$)`, 'g');
+    const preg = new RegExp(`#(${hashtag.event}|${hashtag.nowplaying})(\\s|$)`, 'g');
 
     tweetText.split('\n').forEach(line => {
         if(!line.match(preg)){
