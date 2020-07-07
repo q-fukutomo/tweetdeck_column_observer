@@ -1,14 +1,20 @@
 // #########################
 // config start
-const hashtag = {
+const defaultConfig = {
     "event": "pan_dev_test",
-    "nowplaying": "pan_dev_test_なうぷれ"
+    "nowplaying": "pan_dev_test_なうぷれ",
+    "fontColor": "FFFFFF",
+    "backgroundColor": "00FF00",
 };
+let config;
+
 // config end
 // #########################
 
 // ページを開いた際の初期化処理
 chrome.storage.local.set({'executeOperation':'init'},function(){});
+config = loadConfig();
+
 const observer = createObserver();
 let observeTarget;
 
@@ -43,6 +49,20 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
+function loadConfig(){
+    let _config = defaultConfig;
+    chrome.storage.local.get(['eventTag','nowplayingTag','fontColor','backgroundColor'],(result) => {
+        if(result.eventTag)
+            _config.event = result.eventTag;
+        if(result.nowplayingTag)
+            _config.nowplaying = result.nowplayingTag;
+        if(result.fontColor)
+            _config.fontColor = result.fontColor;
+        if(result.backgroundColor)
+            _config.backgroundColor = result.backgroundColor;
+    });
+    return _config;
+}
 function getExtentionView(){
     return document.querySelector('#extentionView');
 }
@@ -73,6 +93,8 @@ function createExtentionView(){
     const tweetTextBox = document.createElement('p');
     tweetTextBox.id = 'tweetTextBox';
     tweetTextBox.innerText = 'ツイート本文';
+    tweetTextBox.style.color = '#' + config.fontColor;
+    tweetTextBox.style.backgroundColor = '#' + config.backgroundColor;
     extentionViewInner.appendChild(tweetTextBox);
 
     // extentionViewInner.appendChild(document.createElement('hr'));
@@ -119,7 +141,7 @@ function createObserver(){
     return observer;
 }
 function initObserveTarget(){
-    const _searchBox = document.querySelector(`input[value=\\#${hashtag.nowplaying}]`);
+    const _searchBox = document.querySelector(`input[value=\\#${config.nowplaying}]`);
     if(_searchBox === null) return null;
 
     const searchBox = _searchBox;
@@ -156,7 +178,7 @@ function getTweetData(article){
 // TODO: 正規表現、変数展開時のエスケープ処理とか丁寧に
 function removeHashtag(tweetText){
     let viewText = '';
-    const preg = new RegExp(`#(${hashtag.event}|${hashtag.nowplaying})(\\s|$)`, 'g');
+    const preg = new RegExp(`#(${config.event}|${config.nowplaying})(\\s|$)`, 'g');
 
     tweetText.split('\n').forEach(line => {
         if(!line.match(preg)){

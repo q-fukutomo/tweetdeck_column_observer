@@ -1,17 +1,29 @@
-#container {
+.container {
     width: 160px;
 }
-#trigger {
+.container button{
     display: block;
     height: 30px;
-    width: 80px;
+    width: 100px;
     border-radius: 3px;
     outline: none;
     padding: 2px;
     margin: 2px auto;
+    text-align: left;
+    background-size: 1em;
+    background-repeat: no-repeat;
+    background-position: 0.8em 0.5em;
+    padding-left: 2.3em;
+}
+#trigger {
     color: #FFFFFF;
     background-color: #62C633;
+    background-image: url(img/eye.png);
 }
 #trigger.stop {
     background-color: #DC143C;
+}
+
+#openOptions {
+    background-image: url(img/spanner.png);
 }

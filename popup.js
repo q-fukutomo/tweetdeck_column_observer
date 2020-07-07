@@ -55,3 +55,11 @@ chrome.runtime.onMessage.addListener(
         return true;
     }
 );
+
+document.querySelector('#openOptions').addEventListener("click", function() {
+    if (chrome.runtime.openOptionsPage) {
+        chrome.runtime.openOptionsPage();
+    } else {
+        window.open(chrome.runtime.getURL('options.html'));
+    }
+});
