@@ -1,6 +1,6 @@
 {
     "name": "tweetdeck column observer",
-    "version": "2.2",
+    "version": "2.3",
     "description": "deckで監視してるタグのツイートを取得するやつ",
     "permissions": ["activeTab", "declarativeContent", "tabs", "storage"],
     "background": {

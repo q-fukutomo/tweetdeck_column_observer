@@ -5,6 +5,9 @@ chrome.storage.local.get('executeOperation',(result) => {
     if(result.executeOperation === 'stop'){
         triggerButton.innerText = '監視停止';
         triggerButton.classList.add('stop');
+    }else if(result.executeOperation === 'start'){
+        triggerButton.innerText = '監視開始';
+        triggerButton.classList.add('start');
     }
 });
 
@@ -41,20 +44,6 @@ triggerButton.onclick = function(element) {
         })
     });
 };
-
-// content側で停止押したときの処理
-chrome.runtime.onMessage.addListener(
-    function(request,sender,sendResponse){
-        console.log(request);
-
-        triggerButton.innerText = '監視開始';
-        triggerButton.classList.remove('stop');
-        chrome.storage.local.set({'executeOperation':'start'},function(){});
-
-        sendResponse({status: "OK"});
-        return true;
-    }
-);
 
 document.querySelector('#openOptions').addEventListener("click", function() {
     if (chrome.runtime.openOptionsPage) {

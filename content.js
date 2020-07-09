@@ -20,12 +20,7 @@ let observeTarget;
 
 chrome.runtime.onMessage.addListener(
     function(request,sender,sendResponse){
-        const extentionView = createExtentionView();
-        extentionView.querySelector('#closeButton').addEventListener('click', ()=>{
-            disableExtentionView();
-            observer.disconnect();
-            chrome.runtime.sendMessage({'msg': 'close'}, (res)=>{console.log(res)});
-        });
+        createExtentionView();
 
         if(request.msg === 'init'){
             observeTarget = initObserveTarget();
@@ -106,6 +101,11 @@ function createExtentionView(){
     const closeButton = document.createElement('button');
     closeButton.id = 'closeButton';
     closeButton.innerText = '閉じる';
+    closeButton.addEventListener('click', ()=>{
+        disableExtentionView();
+        observer.disconnect();
+        chrome.runtime.sendMessage({'msg': 'close'}, (res)=>{console.log(res)});
+    });
     closeButtonWrapper.appendChild(closeButton);
 
     document.body.appendChild(extentionView);
