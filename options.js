@@ -74,3 +74,10 @@ document.querySelector("#backgroundColorCheck").addEventListener("click",functio
         alert(`現在の背景色は "${result.backgroundColor}" です`);
     });
 });
+
+const configKey = ['eventTag','nowplayingTag','fontColor','backgroundColor'];
+document.querySelector("#allReset").addEventListener("click",function(){
+    chrome.storage.local.remove(configKey,(result) => {
+        alert("すべての設定をリセットしました");
+    });
+});
