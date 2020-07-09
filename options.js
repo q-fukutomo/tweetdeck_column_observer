@@ -69,8 +69,8 @@ document.querySelector("#backgroundColorSave").addEventListener("click",function
         alert(`背景色に "${backgroundColor}" を設定しました`);
     });
 });
-document.querySelector("#colorCheck").addEventListener("click",function(){
-    chrome.storage.local.get('color',(result) => {
-        alert(`現在の背景色は "${result.color}" です`);
+document.querySelector("#backgroundColorCheck").addEventListener("click",function(){
+    chrome.storage.local.get('backgroundColor',(result) => {
+        alert(`現在の背景色は "${result.backgroundColor}" です`);
     });
 });
