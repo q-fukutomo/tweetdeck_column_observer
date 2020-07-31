@@ -37,7 +37,7 @@ chrome.runtime.onMessage.addListener(
         }else if(request.msg === 'stop'){
             disableExtentionView();
             observer.disconnect();
-            sendResponse({state: 0,msg: 'OK'});
+            sendResponse({status: 0, msg: 'OK'});
         }
 
         return true;
@@ -185,7 +185,7 @@ function removeHashtag(tweetText){
             viewText += line+'\n';
         }else{
             line = line.replace(preg, '');
-            if(line.match(/[^\s]/)) viewText += line+'\n';
+            if(line.match(/\S/)) viewText += line+'\n';
         }
     });
     return viewText;
