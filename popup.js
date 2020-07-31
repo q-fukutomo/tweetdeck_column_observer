@@ -15,6 +15,7 @@ triggerButton.onclick = function(element) {
     let executeOperation;
     chrome.storage.local.get('executeOperation',(result) => {
         executeOperation = result.executeOperation;
+        if(!executeOperation) executeOperation = 'init';
     });
     console.log('executeOperation',executeOperation)
 
