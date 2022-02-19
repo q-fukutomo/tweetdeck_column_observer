@@ -1,0 +1,20 @@
+{
+  "name": "tweetdeck_colmuns_observer",
+  "version": "3.0.0",
+  "description": "deckで監視してるタグのツイートを取得するやつ",
+  "main": "src/main.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/q-fukutomo/tweetdeck_column_observer.git"
+  },
+  "author": "q-fukutomo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/q-fukutomo/tweetdeck_column_observer/issues"
+  },
+  "homepage": "https://github.com/q-fukutomo/tweetdeck_column_observer#readme"
+}
