@@ -15,7 +15,7 @@
   \**************************************/
 /***/ (() => {
 
-eval("chrome.runtime.onInstalled.addListener(function() {\n    chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {\n        chrome.declarativeContent.onPageChanged.addRules([{\n            conditions: [\n                new chrome.declarativeContent.PageStateMatcher({\n                    pageUrl: {hostEquals: 'tweetdeck.twitter.com'},\n                })\n            ],\n            actions: [\n                new chrome.declarativeContent.ShowPageAction()\n            ]\n        }]);\n    });\n});\n\n// content側で停止押したときの処理\nchrome.runtime.onMessage.addListener(\n    function(request,sender,sendResponse){\n        chrome.storage.local.set({'executeOperation':'start'},function(){});\n        sendResponse({status: \"OK\"});\n        return true;\n    }\n);\n\n//# sourceURL=webpack://tweetdeck_colmuns_observer/./src/background/background.js?");
+eval("chrome.runtime.onInstalled.addListener(function () {\n  chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {\n    chrome.declarativeContent.onPageChanged.addRules([\n      {\n        conditions: [\n          new chrome.declarativeContent.PageStateMatcher({\n            pageUrl: { hostEquals: 'tweetdeck.twitter.com' },\n          }),\n        ],\n        actions: [new chrome.declarativeContent.ShowPageAction()],\n      },\n    ]);\n  });\n});\n\n// content側で停止押したときの処理\nchrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {\n  chrome.storage.local.set({ executeOperation: 'start' }, function () {});\n  sendResponse({ status: 'OK' });\n  return true;\n});\n\n\n//# sourceURL=webpack://tweetdeck_colmuns_observer/./src/background/background.js?");
 
 /***/ })
 
