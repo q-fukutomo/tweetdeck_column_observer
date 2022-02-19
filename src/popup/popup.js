@@ -1,3 +1,5 @@
+import "./popup.css"
+
 const triggerButton = document.getElementById('trigger');
 
 // popup表示時

@@ -7,10 +7,14 @@
 ######################
 
 導入
+本リポジトリをzip形式をダウンロード
+↓
+ダウンロードしたzipファイルを解凍
+↓
 アドレスバーに chrome://extensions/ を入力して拡張機能の管理画面を開く
 ↓
 https://qiita.com/RyBB/items/32b2a7b879f21b3edefc#chrome%E3%81%B8%E3%81%AE%E9%81%A9%E7%94%A8%E6%96%B9%E6%B3%95 などを参考に、
-「tweetdeck_column_obserever」フォルダを読み込ませる
+解凍したフォルダの中の「dist」フォルダを読み込ませる
 導入できたらアドレスバーの横にアイコンが出てくる(青背景に白抜きの#tのもの)
 ※Deck以外のページでは拡張が無効になり、色がグレーになる
 ↓
@@ -43,39 +47,33 @@ https://qiita.com/RyBB/items/32b2a7b879f21b3edefc#chrome%E3%81%B8%E3%81%AE%E9%81
 設定ページ作成中です、対応しきれていない部分は直接ソース編集からお願いします
 ソース編集後は拡張管理画面から拡張の再読込 → deck再読込 → 監視開始で適用されます
 
-基本的に機能の中身はcontent.js、デザイン関係は全部content.cssを編集します
+設定ページから変更可能なもの
+・監視タグを変えたい
+・文字色変えたい
+・クロマキー用の背景色変えたい
 
-以下目的別の対応
-
-監視タグを変えたい
-→ 設定ページから変更
-
-文字色変えたい
-→ 設定ページから変更
-
-クロマキー用の背景色変えたい
-→ 設定ページから変更
+上記以外のデザイン関係のカスタマイズは、dist/css/content.cssを編集します
 
 拡張表示枠の位置を変えたい
-→ content.cssの #extentionView { 〜 }の中のbottom, rightの値をいじる
+→ の #extentionView { 〜 }の中のbottom, rightの値をいじる
 ※デフォルトではウィンドウと表示枠それぞれの右下の角からの距離が入っていますがtop,leftにすれば左上同士とかにできるので適宜
 参考: http://www.htmq.com/style/#hyo
 
 テキストボックスの大きさ変えたい
-→ まずcontent.cssの#extentionView { 〜 }の中のwidthとheightで拡張全体の表示領域を調整する
-→ その後同ファイルの#tweetTextBox { 〜 }の中のheightでテキスト表示用の枠の高さを調整する
+→ #extentionView { 〜 }の中のwidthとheightで拡張全体の表示領域を調整する
+→ #tweetTextBox { 〜 }の中のheightでテキスト表示用の枠の高さを調整する
 ※横幅は枠いっぱい-余白分(左右10pxずつ)になるので全体幅側から調整するのがいい
 
 テキストボックスのフチと文字の距離調整したい
-→ content.cssの #tweetTextBox { 〜 }の中のpaddingの右辺をいじる、上下左右異なる値も設定できるので必要に応じて
+→ #tweetTextBox { 〜 }の中のpaddingの右辺をいじる、上下左右異なる値も設定できるので必要に応じて
 詳細: http://www.htmq.com/style/padding.shtml
 
 文字サイズ変えたい
-→ content.cssの #tweetTextBox { 〜 }の中のfont-sizeの右辺をいじる
+→ #tweetTextBox { 〜 }の中のfont-sizeの右辺をいじる
 
 フォント変えたい
-→ content.cssの #tweetTextBox { 〜 }の中のfont-familyの右辺の"先頭"に使いたいフォント名突っ込む
-※先頭から順番にそのフォントがあるか判定し、あれば適用/なければ次のフォント名での判定を繰り返します
+→ #tweetTextBox { 〜 }の中のfont-familyの右辺の"先頭"に使いたいフォント名を記入
+※先頭から順番にそのフォントがPCにインストールされているか判定し、あれば適用/なければ次のフォント名で同様の判定を繰り返します
 
 ######################
 
