@@ -24,6 +24,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.msg === 'init') {
     observeTarget = initObserveTarget();
     if (observeTarget) {
+      // NOTE: 既に取得済みのツイートの中で最新のものを表示
+      const article = observeTarget.querySelector('article');
+      if (article) {
+        updateExtentionView(article);
+      }
       observer.observe(observeTarget, { childList: true });
       sendResponse({ status: 0, msg: 'OK' });
     } else {
@@ -131,28 +136,28 @@ function disableExtentionView() {
 }
 
 function createObserver() {
-  const observer = new MutationObserver((mutations) => {
+  return new MutationObserver((mutations) => {
     mutations.forEach((mutate) => {
-      Array.from(mutate.addedNodes).forEach((newArticle) =>
-        updateExtentionView(newArticle)
-      );
+      if (
+        mutate.addedNodes.length > 0 &&
+        mutate.addedNodes[0].nodeName === 'ARTICLE'
+      ) {
+        updateExtentionView(mutate.addedNodes[0]);
+      }
     });
   });
-  return observer;
 }
 function initObserveTarget() {
-  const _searchBox = document.querySelector(
+  const searchBox = document.querySelector(
     `input[value=\\#${config.nowplaying}]`
   );
-  if (_searchBox === null) return null;
+  if (searchBox === null) return null;
 
-  const searchBox = _searchBox;
   const column = searchBox.closest('div.column-panel');
 
-  const observeTarget = column.querySelector(
+  return column.querySelector(
     'div.js-column-content div.js-column-scroller div.js-chirp-container'
   );
-  return observeTarget;
 }
 
 function updateExtentionView(article) {

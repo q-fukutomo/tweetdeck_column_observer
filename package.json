@@ -1,6 +1,6 @@
 {
   "name": "tweetdeck_colmuns_observer",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "deckで監視してるタグのツイートを取得するやつ",
   "main": "src/main.js",
   "devDependencies": {
