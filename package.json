@@ -37,5 +37,6 @@
   "bugs": {
     "url": "https://github.com/q-fukutomo/tweetdeck_column_observer/issues"
   },
-  "homepage": "https://github.com/q-fukutomo/tweetdeck_column_observer#readme"
+  "homepage": "https://github.com/q-fukutomo/tweetdeck_column_observer#readme",
+  "private": true
 }
