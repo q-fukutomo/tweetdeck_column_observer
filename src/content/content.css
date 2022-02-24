@@ -1,19 +1,47 @@
 #extentionView {
     width:600px;
-    height:170px;
+    height:160px;
     position:absolute;
-    bottom:2px;
-    right:2px;
+    bottom:20px;
+    right:5px;
     z-index:10;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
+#extentionView.standby{
+    display: none;
+}
+#extentionView.hidden{
+    bottom: 0;
+    height: 30px;
+}
+
+#extensionSwitcher{
+    background-size: contain;
+    background-image: url("chrome-extension://__MSG_@@extension_id__/img/arrow-expand-down.png");
+    background-color: #FFF;
+    border: solid 1px;
+    border-bottom: none;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+}
+#extentionView.hidden > #extensionSwitcher{
+    background-image: url("chrome-extension://__MSG_@@extension_id__/img/arrow-expand-up.png");
+}
+
 #extentionViewInner {
     box-sizing: border-box;
     width: 100%;
-    height: 100%;
+    height: 130px;
     border: 1px solid #333333;
     background-color: #FFFFFF;
     padding: 10px;
     /* opacity:70%; */
+}
+#extentionView.hidden > #extentionViewInner{
+    display: none;
 }
 
 #authorIcon {
@@ -39,18 +67,4 @@
     font-size: 17px;
     color: #FFFFFF;
     /* background-color: #00FF00; */
-}
-
-#closeButtonWrapper {
-    position: absolute;
-    bottom: 15px;
-    left: 0px;
-    width: 100%;
-}
-#closeButton {
-    display: block;
-    height: 30px;
-    width: 80px;
-    outline: none;
-    margin: 2px auto;
 }

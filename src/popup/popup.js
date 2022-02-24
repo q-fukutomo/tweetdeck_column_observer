@@ -1,61 +1,24 @@
 import './popup.css';
 
-const triggerButton = document.getElementById('trigger');
-
-// popup表示時
-chrome.storage.local.get('executeOperation', (result) => {
-  if (result.executeOperation === 'stop') {
-    triggerButton.innerText = '監視停止';
-    triggerButton.classList.add('stop');
-  } else if (result.executeOperation === 'start') {
-    triggerButton.innerText = '監視開始';
-    triggerButton.classList.add('start');
-  }
-});
-
-triggerButton.onclick = function (element) {
-  let executeOperation;
-  chrome.storage.local.get('executeOperation', (result) => {
-    executeOperation = result.executeOperation;
-    if (!executeOperation) executeOperation = 'init';
-  });
-  console.log('executeOperation', executeOperation);
+const triggerButton = document.querySelector('#trigger');
+triggerButton.addEventListener('click', function () {
+  if (triggerButton.classList.contains('stop')) return;
 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, { msg: executeOperation }, (res) => {
-      switch (executeOperation) {
-        case 'init':
-          if (res.status === 0) {
-            triggerButton.innerText = '監視停止';
-            triggerButton.classList.add('stop');
-            chrome.storage.local.set(
-              { executeOperation: 'stop' },
-              function () {}
-            );
-          }
-          break;
-        case 'start':
-          triggerButton.innerText = '監視停止';
-          triggerButton.classList.add('stop');
-          chrome.storage.local.set(
-            { executeOperation: 'stop' },
-            function () {}
-          );
-          break;
-        case 'stop':
-          triggerButton.innerText = '監視開始';
-          triggerButton.classList.remove('stop');
-          chrome.storage.local.set(
-            { executeOperation: 'start' },
-            function () {}
-          );
-          break;
-        default:
-          break;
+    chrome.tabs.sendMessage(tabs[0].id, { msg: 'start' }, (res) => {
+      if (typeof res.status === 'undefined') {
+        console.log('ERROR: レスポンスに異常があります');
+        return;
+      }
+
+      console.log(`${res.status}: ${res.msg}`);
+      if (res.status === 'OK') {
+        triggerButton.innerText = '監視中';
+        triggerButton.classList.add('stop');
       }
     });
   });
-};
+});
 
 document.querySelector('#openOptions').addEventListener('click', function () {
   if (chrome.runtime.openOptionsPage) {
