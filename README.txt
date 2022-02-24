@@ -80,3 +80,16 @@ https://qiita.com/RyBB/items/32b2a7b879f21b3edefc#chrome%E3%81%B8%E3%81%AE%E9%81
 拡張で表示する要素はhtmlのテンプレートとかはなくてcontent.jsのcreateExtentionView関数の中で作ってます
 
 何かご要望等ございましたら @mgn_shock_pan または @q_fktm までご連絡ください(Twitter)
+
+######################
+
+スペシャルサンクス
+
+以下のサイトより画像素材をお借りしています。
+https://icooon-mono.com/
+https://materialdesignicons.com/
+
+######################
+
+このソフトウェアは、 Apache 2.0ライセンスで配布されている製作物が含まれています。
+https://www.apache.org/licenses/LICENSE-2.0
