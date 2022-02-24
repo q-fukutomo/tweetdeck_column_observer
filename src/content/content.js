@@ -6,44 +6,43 @@ const defaultConfig = {
   fontColor: 'FFFFFF',
   backgroundColor: '00FF00',
 };
-let config;
 
 // config end
 // #########################
 
 // ページを開いた際の初期化処理
-chrome.storage.local.set({ executeOperation: 'init' }, function () {});
-config = loadConfig();
+const config = loadConfig();
 
 const observer = createObserver();
-let observeTarget;
+createExtentionView();
 
+let isFirst = true;
+// NOTE: trueを返さないとpopup.jsが下記のエラーを吐く
+// Unchecked runtime.lastError: The message port closed before a response was received.
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  createExtentionView();
-
-  if (request.msg === 'init') {
-    observeTarget = initObserveTarget();
-    if (observeTarget) {
-      // NOTE: 既に取得済みのツイートの中で最新のものを表示
-      const article = observeTarget.querySelector('article');
-      if (article) {
-        updateExtentionView(article);
-      }
-      observer.observe(observeTarget, { childList: true });
-      sendResponse({ status: 0, msg: 'OK' });
-    } else {
-      sendResponse({ status: 1, msg: 'target-column not found' });
+  if (request.msg === 'start') {
+    if (!isFirst) {
+      sendResponse({ status: 'WARNING', msg: '既に監視中' });
+      return true;
     }
-  } else if (request.msg === 'start') {
-    enableExtentionView();
+
+    const observeTarget = initObserveTarget();
+    if (observeTarget === null) {
+      sendResponse({ status: 'ERROR', msg: '対象列の取得に失敗' });
+      return true;
+    }
+    const article = observeTarget.querySelector('article');
+    if (article) {
+      updateExtentionView(article);
+    }
+    getExtentionView().classList.remove('standby');
     observer.observe(observeTarget, { childList: true });
-    sendResponse({ status: 0, msg: 'OK' });
-  } else if (request.msg === 'stop') {
-    disableExtentionView();
-    observer.disconnect();
-    sendResponse({ status: 0, msg: 'OK' });
+    isFirst = false;
+    sendResponse({ status: 'OK', msg: '監視開始' });
+    return true;
   }
 
+  sendResponse({ status: 'ERROR', msg: '不明なエラー' });
   return true;
 });
 
@@ -65,14 +64,20 @@ function getExtentionView() {
   return document.querySelector('#extentionView');
 }
 function createExtentionView() {
-  const _extentionView = getExtentionView();
-  if (_extentionView !== null) {
-    console.log('extentionView already exists');
-    return _extentionView;
-  }
-
   const extentionView = document.createElement('div');
   extentionView.id = 'extentionView';
+  extentionView.classList.add('standby');
+
+  const extensionSwitcher = document.createElement('div');
+  extensionSwitcher.id = 'extensionSwitcher';
+  extensionSwitcher.addEventListener('click', () => {
+    if (getExtentionView().classList.contains('hidden')) {
+      getExtentionView().classList.remove('hidden');
+    } else {
+      getExtentionView().classList.add('hidden');
+    }
+  });
+  extentionView.appendChild(extensionSwitcher);
 
   const extentionViewInner = document.createElement('div');
   extentionViewInner.id = 'extentionViewInner';
@@ -95,44 +100,10 @@ function createExtentionView() {
   tweetTextBox.style.backgroundColor = `#${config.backgroundColor}`;
   extentionViewInner.appendChild(tweetTextBox);
 
-  // extentionViewInner.appendChild(document.createElement('hr'));
-
-  const closeButtonWrapper = document.createElement('div');
-  closeButtonWrapper.id = 'closeButtonWrapper';
-  extentionViewInner.appendChild(closeButtonWrapper);
-
-  const closeButton = document.createElement('button');
-  closeButton.id = 'closeButton';
-  closeButton.innerText = '閉じる';
-  closeButton.addEventListener('click', () => {
-    disableExtentionView();
-    observer.disconnect();
-    chrome.runtime.sendMessage({ msg: 'close' }, (res) => {
-      console.log(res);
-    });
-  });
-  closeButtonWrapper.appendChild(closeButton);
-
   document.body.appendChild(extentionView);
 
   console.log('created extentionView');
   return extentionView;
-}
-function enableExtentionView() {
-  const extentionView = document.querySelector('#extentionView');
-  if (extentionView) {
-    extentionView.setAttribute('style', 'display: block;');
-    return 0;
-  }
-  return 1;
-}
-function disableExtentionView() {
-  const extentionView = document.querySelector('#extentionView');
-  if (extentionView) {
-    extentionView.setAttribute('style', 'display: none;');
-    return 0;
-  }
-  return 1;
 }
 
 function createObserver() {
@@ -151,7 +122,13 @@ function initObserveTarget() {
   const searchBox = document.querySelector(
     `input[value=\\#${config.nowplaying}]`
   );
-  if (searchBox === null) return null;
+  if (searchBox === null) {
+    alert(
+      `#${config.nowplaying}の検索をしている列が見つかりませんでした\n` +
+        '検索対象のタグがあっているか、また、その列が表示されていることを確認してください'
+    );
+    return null;
+  }
 
   const column = searchBox.closest('div.column-panel');
 
@@ -161,9 +138,6 @@ function initObserveTarget() {
 }
 
 function updateExtentionView(article) {
-  const extentionView = getExtentionView();
-  if (extentionView === null) return 1;
-
   const tweetData = getTweetData(article);
   const authorIcon = document.getElementById('authorIcon');
   const author = document.getElementById('author');
