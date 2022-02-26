@@ -25,6 +25,7 @@
 		"formulahendry.auto-rename-tag",
 		"formulahendry.auto-close-tag",
 		"christian-kohler.path-intellisense",
+		"octref.vetur"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

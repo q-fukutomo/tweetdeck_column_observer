@@ -1,4 +1,5 @@
 const path = require('path');
+const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
@@ -17,7 +18,26 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env'],
+        },
+      },
     ],
+  },
+  resolve: {
+    // Webpackで利用するときの設定
+    alias: {
+      vue$: 'vue/dist/vue.esm.js',
+    },
+    // extensions: ['*', '.js', '.vue', '.json'],
   },
 
   devServer: {
@@ -35,6 +55,7 @@ module.exports = {
     filename: 'js/[name].js',
   },
   plugins: [
+    new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       chunks: ['popup'],
       filename: 'popup.html',

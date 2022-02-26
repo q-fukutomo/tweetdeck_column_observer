@@ -4,7 +4,12 @@ module.exports = {
     webextensions: true,
     es2021: true,
   },
-  extends: ['airbnb-base', 'plugin:prettier/recommended'],
+  extends: [
+    'plugin:vue/essential',
+    'airbnb-base',
+    'plugin:prettier/recommended',
+    '@vue/prettier',
+  ],
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module',
