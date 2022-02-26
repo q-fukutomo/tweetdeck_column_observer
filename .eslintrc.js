@@ -16,5 +16,7 @@ module.exports = {
   },
   rules: {
     'prettier/prettier': ['error', { singleQuote: true }],
+    'no-use-before-define': 'off',
+    'no-alert': 'off',
   },
 };
