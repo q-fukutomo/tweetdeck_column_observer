@@ -1,0 +1,47 @@
+{
+    "manifest_version": 3,
+    "name": "tweetdeck column observer",
+    "version": "4.0.0",
+    "description": "deckで監視してるタグのツイートを取得するやつ",
+    "permissions": [
+        "activeTab",
+        "declarativeContent",
+        "tabs",
+        "storage"
+    ],
+    "host_permissions":[
+        "https://tweetdeck.twitter.com/*"
+    ],
+    "background": {
+        "service_worker": "js/background.js"
+    },
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": true
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://tweetdeck.twitter.com/*"],
+            "js": ["js/content.js"],
+            "css": ["style/content.css"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources":["img/*"], 
+            "matches": ["https://tweetdeck.twitter.com/*"]
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "32": "img/icon_32.png"
+        }
+    },
+    "icons": {
+        "48": "img/icon_48.png"
+    },
+    "content_security_policy": {
+        "extension_pages":"script-src 'self'; object-src 'self';"
+    }
+}

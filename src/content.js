@@ -21,11 +21,7 @@
   let isFirst = true;
   // NOTE: trueを返さないとpopup.jsが下記のエラーを吐く
   // Unchecked runtime.lastError: The message port closed before a response was received.
-  chrome.runtime.onMessage.addListener(function (
-    request,
-    sender,
-    sendResponse
-  ) {
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.msg === 'start') {
       if (!isFirst) {
         sendResponse({ status: 'WARNING', msg: '既に監視中' });
@@ -58,20 +54,20 @@
     });
   }
   async function loadConfig() {
-    const _config = defaultConfig;
     const userConfig = await getLocalStorage([
       'eventTag',
       'nowplayingTag',
       'fontColor',
       'backgroundColor',
     ]);
-    if (userConfig.eventTag) _config.event = userConfig.eventTag;
-    if (userConfig.nowplayingTag) _config.nowplaying = userConfig.nowplayingTag;
-    if (userConfig.fontColor) _config.fontColor = userConfig.fontColor;
-    if (userConfig.backgroundColor)
-      _config.backgroundColor = userConfig.backgroundColor;
 
-    return _config;
+    return {
+      event: userConfig.eventTag ?? defaultConfig.event,
+      nowplaying: userConfig.nowplayingTag ?? defaultConfig.nowplaying,
+      fontColor: userConfig.fontColor ?? defaultConfig.fontColor,
+      backgroundColor:
+        userConfig.backgroundColor ?? defaultConfig.backgroundColor,
+    };
   }
   function getExtentionView() {
     return document.querySelector('#extentionView');
@@ -98,7 +94,7 @@
 
     const authorIcon = document.createElement('img');
     authorIcon.id = 'authorIcon';
-    authorIcon.setAttribute('src', chrome.extension.getURL('img/egg.png'));
+    authorIcon.setAttribute('src', chrome.runtime.getURL('img/egg.png'));
     extentionViewInner.appendChild(authorIcon);
 
     const author = document.createElement('p');
@@ -175,20 +171,22 @@
 
   // TODO: 正規表現、変数展開時のエスケープ処理とか丁寧に
   function removeHashtag(tweetText) {
-    let viewText = '';
     const preg = new RegExp(
       `#(${config.event}|${config.nowplaying})(\\s|$)`,
       'g'
     );
 
-    tweetText.split('\n').forEach((line) => {
-      if (!line.match(preg)) {
-        viewText += `${line}\n`;
-      } else {
-        line = line.replace(preg, '');
-        if (line.match(/\S/)) viewText += `${line}\n`;
-      }
-    });
-    return viewText;
+    return tweetText
+      .split('\n')
+      .map((line) => {
+        if (!line.match(preg)) {
+          return line;
+        }
+        if (line.replace(preg, '').match(/\S/)) {
+          return line.replace(preg, '');
+        }
+        return '';
+      })
+      .join('\n');
   }
 })();

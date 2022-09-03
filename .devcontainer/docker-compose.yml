@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        UID: ${UID:-2000}
+        GID: ${GID:-2000}
     volumes:
       - ../:/usr/src/repos
       - node_modules_volume:/usr/src/repos/node_modules
